@@ -1,4 +1,4 @@
-"""API Client for Allnet devices."""
+﻿"""API Client for Allnet devices."""
 import logging
 import xml.etree.ElementTree as ET
 from typing import Any
@@ -157,4 +157,4 @@ class AllnetDevice:
     def set_actor(self, actor_id: int, state: bool) -> None:
         """Set actor state."""
         action = 1 if state else 0
-        self._make_request(f"/xml/?mode=actor&id={actor_id}&action={action}")
+        self._make_request(f"/xml/?mode=actor&type=switch&id={actor_id}&action={action}")
