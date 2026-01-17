@@ -44,10 +44,16 @@ class AllnetSwitch(CoordinatorEntity, SwitchEntity):
         self._actor_id = actor_data["id"]
         self._attr_name = f"Allnet {actor_data['name']}"
         self._attr_unique_id = f"{device.host}_actor_{self._actor_id}"
+        self._attr_assumed_state = False
+        self._pending_state = None
 
     @property
     def is_on(self) -> bool | None:
         """Return true if switch is on."""
+        # If we have a pending state change, use that
+        if self._pending_state is not None:
+            return self._pending_state
+            
         if not self.coordinator.data or "actors" not in self.coordinator.data:
             return None
 
@@ -61,20 +67,28 @@ class AllnetSwitch(CoordinatorEntity, SwitchEntity):
 
     async def async_turn_on(self, **kwargs: Any) -> None:
         """Turn the switch on."""
+        self._pending_state = True
+        self.async_write_ha_state()
+        
         await self.hass.async_add_executor_job(
             self._device.set_actor, self._actor_id, True
         )
         # Wait for device to update state
         await asyncio.sleep(0.5)
+        self._pending_state = None
         await self.coordinator.async_request_refresh()
 
     async def async_turn_off(self, **kwargs: Any) -> None:
         """Turn the switch off."""
+        self._pending_state = False
+        self.async_write_ha_state()
+        
         await self.hass.async_add_executor_job(
             self._device.set_actor, self._actor_id, False
         )
         # Wait for device to update state
         await asyncio.sleep(0.5)
+        self._pending_state = None
         await self.coordinator.async_request_refresh()
 
     @property
