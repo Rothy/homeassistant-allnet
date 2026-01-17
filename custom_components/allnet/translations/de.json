@@ -1,0 +1,22 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Allnet Gerät einrichten",
+        "description": "Geben Sie die Verbindungsdaten für Ihr Allnet-Gerät ein (ALL3500, ALL3073, etc.)",
+        "data": {
+          "host": "IP-Adresse oder Hostname",
+          "username": "Benutzername",
+          "password": "Passwort"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Verbindung zum Gerät fehlgeschlagen. Bitte überprüfen Sie die IP-Adresse und Anmeldedaten.",
+      "unknown": "Unerwarteter Fehler aufgetreten. Bitte prüfen Sie die Logs."
+    },
+    "abort": {
+      "already_configured": "Dieses Gerät ist bereits konfiguriert."
+    }
+  }
+}

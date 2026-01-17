@@ -1,0 +1,22 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Allnet Device Setup",
+        "description": "Enter the connection details for your Allnet device (ALL3500, ALL3073, etc.)",
+        "data": {
+          "host": "IP Address or Hostname",
+          "username": "Username",
+          "password": "Password"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Failed to connect to the device. Please check the IP address and credentials.",
+      "unknown": "Unexpected error occurred. Please check the logs."
+    },
+    "abort": {
+      "already_configured": "This device is already configured."
+    }
+  }
+}

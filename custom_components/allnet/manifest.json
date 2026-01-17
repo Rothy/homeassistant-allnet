@@ -1,0 +1,11 @@
+{
+  "domain": "allnet",
+  "name": "Allnet Devices",
+  "codeowners": ["@allnet_integration"],
+  "config_flow": true,
+  "dependencies": [],
+  "documentation": "https://github.com/homeassistant/core/tree/dev/homeassistant/components/allnet",
+  "iot_class": "local_polling",
+  "requirements": ["httpx>=0.24.0"],
+  "version": "1.0.0"
+}
