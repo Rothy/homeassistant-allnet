@@ -1,121 +1,127 @@
-# Allnet Integration für Home Assistant
+﻿# Allnet Integration for Home Assistant
 
-Diese Custom Integration ermöglicht die automatische Integration von Allnet-Geräten (ALL3500, ALL3073, etc.) in Home Assistant.
+Custom integration for automatic discovery and control of Allnet devices (ALL3500, ALL3073, etc.) in Home Assistant.
 
 ## Features
 
-✅ **Automatische Geräteerkennung**: Scannt automatisch alle verfügbaren Sensoren und Aktoren
-✅ **Unterstützte Sensoren**:
-   - Temperatur (°C/°F)
-   - Luftfeuchtigkeit (%)
-   - Luftdruck (hPa/Pa)
-   - Weitere Sensoren werden automatisch erkannt
+ **Automatic Device Discovery**: Automatically scans all available sensors and actors
+ **Supported Sensors**:
+   - Temperature (°C/°F)
+   - Humidity (%)
+   - Air Pressure (hPa/Pa)
+   - Additional sensors are automatically detected
 
-✅ **Unterstützte Aktoren**: Schalter/Relais (ein/aus)
-✅ **Config Flow**: Einfache Einrichtung über die UI
-✅ **Polling**: Automatische Updates alle 60 Sekunden
+ **Supported Actors**: Switches/Relays (on/off)
+ **Config Flow**: Easy setup via UI
+ **Polling**: Automatic updates every 60 seconds
 
 ## Installation
 
-### Manuelle Installation
+### Via SSH/Terminal (Recommended)
 
-1. Kopiere den Ordner `custom_components/allnet` in dein Home Assistant `config/custom_components/` Verzeichnis
-2. Starte Home Assistant neu
-3. Gehe zu Einstellungen → Geräte & Dienste → Integration hinzufügen
-4. Suche nach "Allnet"
-5. Gib die IP-Adresse, Benutzername und Passwort ein
-
-### Über SSH/Terminal
+1. Open the **Terminal & SSH** add-on in Home Assistant
+2. Run the following commands:
 
 ```bash
-# Kopiere die Integration
-scp -r custom_components/allnet root@homeassistant.local:/config/custom_components/
-
-# Oder per Terminal auf dem HA-System:
-cd /config
-mkdir -p custom_components
-# ... dann Dateien kopieren
+mkdir -p /config/custom_components/allnet
+cd /config/custom_components/allnet
+git clone https://github.com/Rothy/homeassistant-allnet.git .
+ha core restart
 ```
 
-## Konfiguration
+3. After restart, go to **Settings**  **Devices & Services**  **Add Integration**
+4. Search for **"Allnet"**
+5. Enter your device credentials:
+   - **Host**: e.g., `192.168.178.4`
+   - **Username**: e.g., `ha`
+   - **Password**: Your device password
 
-Nach der Installation:
+### Manual Installation
 
-1. **Einstellungen** → **Geräte & Dienste** → **Integration hinzufügen**
-2. Suche nach **"Allnet"**
-3. Gib folgende Daten ein:
-   - **IP-Adresse**: z.B. `192.168.178.4`
-   - **Benutzername**: z.B. `ha`
-   - **Passwort**: Dein Gerätepasswort
+1. Download this repository
+2. Copy the contents to `/config/custom_components/allnet/`
+3. Restart Home Assistant
+4. Follow steps 3-5 from above
 
-Die Integration erkennt automatisch:
-- Alle aktiven Sensoren (Temperatur, Luftfeuchtigkeit, Luftdruck, etc.)
-- Alle verfügbaren Aktoren/Schalter
+## Configuration
 
-## Unterstützte Geräte
+The integration will automatically discover:
+- All active sensors (temperature, humidity, pressure, etc.)
+- All available actors/switches
+
+## Supported Devices
 
 - Allnet ALL3500
 - Allnet ALL3073
-- Andere Allnet-Geräte mit XML-API
+- Other Allnet devices with XML API
 
-## Beispiel Automatisierung
+## Example Automation
 
 ```yaml
 automation:
-  - alias: "Mine einschalten bei hoher Temperatur"
+  - alias: "Turn on miner at high temperature"
     trigger:
       - platform: numeric_state
-        entity_id: sensor.allnet_intern
+        entity_id: sensor.allnet_internal
         above: 25
     action:
       - service: switch.turn_on
         target:
-          entity_id: switch.allnet_mine
+          entity_id: switch.allnet_miner
 ```
 
-## Fehlerbehebung
+## Troubleshooting
 
-### Verbindung fehlgeschlagen
-- Prüfe IP-Adresse und Netzwerkverbindung
-- Teste mit: `curl -u "ha:PASSWORT" "http://192.168.178.4/xml/?mode=info"`
-- Prüfe Benutzername und Passwort
+### Connection Failed
+- Check IP address and network connectivity
+- Test with: `curl -u "username:password" "http://192.168.178.4/xml/?mode=info"`
+- Verify username and password
 
-### Keine Sensoren/Aktoren gefunden
-- Prüfe in der Allnet Web-UI, ob Sensoren aktiviert sind
-- Logs anschauen: Einstellungen → System → Logs
+### No Sensors/Actors Found
+- Check in the Allnet web UI if sensors are enabled
+- View logs: **Settings**  **System**  **Logs**
 
-## API-Dokumentation
+## API Documentation
 
-Die Integration nutzt die XML-API von Allnet:
-- `/xml/?mode=info` - Geräteinfo
-- `/xml/?mode=sensor&id=X&simple` - Sensor auslesen
-- `/xml/?mode=actor&id=X` - Aktor-Status
-- `/xml/?mode=actor&id=X&action=1/0` - Aktor schalten
+This integration uses the Allnet XML API:
+- `/xml/?mode=info` - Device information
+- `/xml/?mode=sensor&type=list` - List all sensors
+- `/xml/?mode=actor&type=list` - List all actors
+- `/xml/?mode=actor&id=X&action=1/0` - Control actor
 
-## Entwicklung
+### Resources
+- [Allnet ALL3500 Product Page](https://www.allnet.de/produkte/neuheiten/p/all3500/)
+- [Allnet ALL3073 Product Page](https://www.allnet.de/produkte/neuheiten/p/all3073/)
+- [Allnet Support & Documentation](https://www.allnet.de/service/support/)
 
-Beiträge sind willkommen! Diese Integration kann als Basis für eine offizielle Home Assistant Integration dienen.
+## Development
 
-### Struktur
+Contributions are welcome! This integration can serve as a foundation for an official Home Assistant integration.
+
+### Structure
 ```
 custom_components/allnet/
-├── __init__.py          # Integration Setup
-├── config_flow.py       # Config Flow (UI Setup)
-├── const.py             # Konstanten
-├── allnet_api.py        # API Client
-├── sensor.py            # Sensor Platform
-├── switch.py            # Switch Platform
-├── manifest.json        # Integration Manifest
-├── strings.json         # UI Strings
-└── translations/        # Übersetzungen
-    ├── de.json
-    └── en.json
+ __init__.py          # Integration setup
+ config_flow.py       # Config flow (UI setup)
+ const.py             # Constants
+ allnet_api.py        # API client
+ sensor.py            # Sensor platform
+ switch.py            # Switch platform
+ manifest.json        # Integration manifest
+ strings.json         # UI strings
+ translations/        # Translations
+     de.json
+     en.json
 ```
 
-## Lizenz
+## License
 
 MIT License
 
-## Autor
+## Author
 
-Erstellt für das Home Assistant Architekten-Projekt
+Created for the Home Assistant community
+
+## Repository
+
+https://github.com/Rothy/homeassistant-allnet
