@@ -1,10 +1,6 @@
-# Allnet Home Assistant Integration
+# Allnet Integration für Home Assistant
 
-[![GitHub Release][releases-shield]][releases]
-[![GitHub Activity][commits-shield]][commits]
-[![License][license-shield]](LICENSE)
-
-Home Assistant Custom Integration für Allnet-Geräte (ALL3500, ALL3073, etc.)
+Diese Custom Integration ermöglicht die automatische Integration von Allnet-Geräten (ALL3500, ALL3073, etc.) in Home Assistant.
 
 ## Features
 
