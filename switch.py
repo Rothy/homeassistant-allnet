@@ -1,6 +1,7 @@
-"""Support for Allnet switches."""
+﻿"""Support for Allnet switches."""
 from __future__ import annotations
 
+import asyncio
 import logging
 from typing import Any
 
@@ -25,7 +26,7 @@ async def async_setup_entry(
     device = hass.data[DOMAIN][config_entry.entry_id]["device"]
 
     entities = []
-    
+
     if coordinator.data and "actors" in coordinator.data:
         for actor_data in coordinator.data["actors"]:
             entities.append(AllnetSwitch(coordinator, device, actor_data))
@@ -49,13 +50,13 @@ class AllnetSwitch(CoordinatorEntity, SwitchEntity):
         """Return true if switch is on."""
         if not self.coordinator.data or "actors" not in self.coordinator.data:
             return None
-        
+
         for actor in self.coordinator.data["actors"]:
             if actor["id"] == self._actor_id:
                 # State can be "1" or "0" or boolean
                 state = str(actor["state"]).lower()
                 return state in ("1", "true", "on")
-        
+
         return None
 
     async def async_turn_on(self, **kwargs: Any) -> None:
@@ -63,6 +64,8 @@ class AllnetSwitch(CoordinatorEntity, SwitchEntity):
         await self.hass.async_add_executor_job(
             self._device.set_actor, self._actor_id, True
         )
+        # Wait for device to update state
+        await asyncio.sleep(0.5)
         await self.coordinator.async_request_refresh()
 
     async def async_turn_off(self, **kwargs: Any) -> None:
@@ -70,6 +73,8 @@ class AllnetSwitch(CoordinatorEntity, SwitchEntity):
         await self.hass.async_add_executor_job(
             self._device.set_actor, self._actor_id, False
         )
+        # Wait for device to update state
+        await asyncio.sleep(0.5)
         await self.coordinator.async_request_refresh()
 
     @property
